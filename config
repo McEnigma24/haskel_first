@@ -1,0 +1,91 @@
+# ✅ ❌ #
+
+set -eo pipefail
+# set -x
+
+PACKAGES=(
+    build-essential
+    curl
+    libgmp-dev
+)
+
+# echo "${BASH_SOURCE[0]}" # echo "$(dirname "${BASH_SOURCE[0]}")" # echo "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# can be called from any directory -> always gets the WORKING_DIR correct
+export DIR_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+export DIR_TARGET="exe"
+export DIR_INPUT="input"
+export DIR_OUTPUT="output"
+export DIR_BUILD="build"
+export DIR_EXTERNAL="external"
+export DIR_SCRIPTS="scripts"
+export DIR_LOG="log"
+export DIR_RUN_TIME_CONFIG="run_time_config"
+export PATH_DONE_install="${DIR_RUN_TIME_CONFIG}/DONE_installed.txt"
+
+# works only if sourcing is done for every script       #
+# otherwise main will set values for every other shell  #
+export CALLING_ARGUMENTS="$@"
+# ONLY FOR REFERENCE # just use -> "$@"
+
+export PATH_LAST_ARCH_MARKER="$DIR_ROOT/.last_arch_marker"
+
+
+function silent_come_back() { cd - > /dev/null; };                              export -f silent_come_back
+function clear_file() { if [ -f $1 ]; then rm -rf $1; fi; };                    export -f clear_file
+function clear_file_nested() { cd $1; clear_file "$2"; silent_come_back; };     export -f clear_file_nested
+function clear_dir() { if [ -d $1 ]; then rm -rf $1; fi; mkdir $1; };           export -f clear_dir
+function clear_dir_nested() { cd $1; clear_dir "$2"; silent_come_back; };       export -f clear_dir_nested
+function create_dir() { if [ ! -d $1 ]; then mkdir $1; fi; };                   export -f create_dir
+function create_dir_nested() { cd $1; create_dir "$2"; silent_come_back; };     export -f create_dir_nested
+
+
+
+# GHCup provides different binary distribution "channels". These are collections of tools
+# and may differ in purpose and philosophy. First, we select the base channel.
+
+# [S] Skip  [D] Default (GHCup maintained)  [V] Vanilla (Upstream maintained)  [?] Help (default is "Skip").
+
+# D
+# -------------------------------------------------------------------------------
+
+# Do you also want to enable the pre-releases channel, getting access to.
+# alpha, betas and release candidates?
+
+# [N] No  [Y] Yes  [?] Help (default is "N").
+# N
+# -------------------------------------------------------------------------------
+
+# Do you also want to enable the cross channel, getting access to
+# experimental GHCJS, WASM, etc.?
+
+# [N] No  [Y] Yes  [?] Help (default is "N").
+
+# N
+# -------------------------------------------------------------------------------
+
+# Detected bash shell on your system...
+# Do you want ghcup to automatically add the required PATH variable to "/home/womackow/.bashrc"?
+
+# [P] Yes, prepend  [A] Yes, append  [N] No  [?] Help (default is "P").
+
+# A
+# -------------------------------------------------------------------------------
+# Do you want to install haskell-language-server (HLS)?
+# HLS is a language-server that provides IDE-like functionality
+# and can integrate with different editors, such as Vim, Emacs, VS Code, Atom, ...
+# Also see https://haskell-language-server.readthedocs.io/en/stable/
+
+# [Y] Yes  [N] No  [?] Help (default is "N").
+
+# Y
+# -------------------------------------------------------------------------------
+# Do you want to enable better integration of stack with GHCup?
+# This means that stack won't install its own GHC versions, but uses GHCup's.
+# For more information see:
+#   https://docs.haskellstack.org/en/stable/configure/customisation_scripts/#ghc-installation-customisation
+# If you want to keep stacks vanilla behavior, answer 'No'.
+
+# [Y] Yes  [N] No  [?] Help (default is "Y").
+
+# Y
